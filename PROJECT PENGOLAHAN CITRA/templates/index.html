@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Detection Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4f46e5; /* Indigo */
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header Styling */
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h2 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        header p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Card Styling */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Custom File Input */
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            border: 2px dashed var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eef2ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-wrapper:hover {
+            background-color: #e0e7ff;
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-text {
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        /* Method Selection (Chips) */
+        .methods-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .methods-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .method-option {
+            position: relative;
+        }
+
+        .method-option input {
+            display: none; /* Sembunyikan radio button asli */
+        }
+
+        .method-option label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f9fafb;
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .method-option input:checked + label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3);
+        }
+
+        .method-option label:hover {
+            border-color: var(--primary-color);
+        }
+
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            font-size: 1rem;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-reset {
+            background-color: white;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .btn-reset:hover {
+            background-color: #fef2f2;
+        }
+
+        /* Image Display Area */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .image-box {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .image-box h4 {
+            margin-bottom: 1rem;
+            color: #374151;
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .img-container {
+            width: 100%;
+            height: 300px; /* Tinggi tetap agar rapi */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Agar gambar tidak gepeng */
+            border-radius: 4px;
+        }
+
+        /* Empty State */
+        .placeholder-text {
+            color: #9ca3af;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>Digital Image Processing</h2>
+        <p>Aplikasi Deteksi Tepi (Edge Detection) Berbasis Web</p>
+    </header>
+
+    <div class="card">
+        <form method="POST" enctype="multipart/form-data">
+            
+            {% if not filename %}
+            <div class="form-group">
+                <div class="file-upload-wrapper">
+                    <input type="file" name="image" id="imageInput" required accept="image/*">
+                    <div class="upload-text">
+                        <span>📂 Klik atau Geser Gambar ke Sini</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <input type="hidden" name="filename" value="{{ filename }}">
+
+            <div class="form-group">
+                <span class="methods-label" style="text-align: center;">Pilih Metode Deteksi:</span>
+                <div class="methods-container">
+                    <div class="method-option">
+                        <input type="radio" name="method" id="m_sobel" value="sobel">
+                        <label for="m_sobel">Sobel</label>
+                    </div>
+
+                    <div class="method-option">
+                        <input type="radio" name="method" id="m_roberts" value="roberts">
+                        <label for="m_roberts">Roberts</label>
+                    </div>
+
+                    <div class="method-option">
+                        <input type="radio" name="method" id="m_prewitt" value="prewitt">
+                        <label for="m_prewitt">Prewitt</label>
+                    </div>
+
+                    <div class="method-option">
+                        <input type="radio" name="method" id="m_laplace" value="laplace">
+                        <label for="m_laplace">Laplace</label>
+                    </div>
+
+                    <div class="method-option">
+                        <input type="radio" name="method" id="m_freichen" value="freichen">
+                        <label for="m_freichen">Freichen</label>
+                    </div>
+
+                    <!-- 🔥 METHOD BARU -->
+                    <div class="method-option">
+                        <input type="radio" name="method" id="m_canny" value="canny">
+                        <label for="m_canny">Canny</label>
+                    </div>
+
+                    <div class="method-option">
+                        <input type="radio" name="method" id="m_log" value="log">
+                        <label for="m_log">LoG</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="btn-primary">🔍 Proses Deteksi</button>
+                <button type="submit" name="reset" value="1" class="btn-reset">🔄 Reset</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="results-grid">
+        <div class="image-box">
+            <h4>Citra Asli</h4>
+            <div class="img-container">
+                {% if original_image %}
+                    <img src="{{ url_for('static', filename=original_image) }}" alt="Original Image">
+                {% else %}
+                    <img id="preview" style="display:none;">
+                    <span id="placeholderOriginal" class="placeholder-text">Belum ada gambar</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="image-box">
+            <h4>Hasil Deteksi</h4>
+            <div class="img-container">
+                {% if result_image %}
+                    <img src="{{ url_for('static', filename=result_image) }}" alt="Result Image">
+                {% else %}
+                    <span class="placeholder-text">Hasil akan muncul di sini</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById('imageInput');
+    const preview = document.getElementById('preview');
+    const placeholderOriginal = document.getElementById('placeholderOriginal');
+    const uploadText = document.querySelector('.upload-text span');
+
+    if (input) {
+        input.addEventListener('change', () => {
+            const file = input.files[0];
+            if (file) {
+                // Update text area upload
+                uploadText.textContent = "✅ " + file.name;
+                
+                // Show preview
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+                if(placeholderOriginal) placeholderOriginal.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
